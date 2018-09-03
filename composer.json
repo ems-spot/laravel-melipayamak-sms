@@ -1,0 +1,43 @@
+{
+    "name": "ems-spot/laravel-melipayamak-sms",
+    "description": "The melipayamak SMS integration for Laravel 5.",
+    "type": "laravel-package",
+    "homepage": "https://github.com/ems-spot/laravel-melipayamak-sms",
+    "keywords": ["laravel", "laravel5", "melipayamak", "sms", "api"],
+    "license": "GNU",
+    "authors": [
+        {
+            "name": "Aria Radmand",
+            "email": "aria@radmand.net",
+            "homepage": "http://ariaa.net",
+            "role": "Developer"
+        },
+        {
+            "name": "Farid Shahidi",
+            "email": "farid.sh69@gmail.com",
+            "homepage": "http://faridshahidi.ir/"
+        }
+    ],
+    "require": {
+        "php": ">=7.2.9",
+        "illuminate/support": "5.*",
+        "melipayamak/laravel": "0.1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "EmsSpot\\Melipayamak\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "EmsSpot\\Melipayamak\\MelipayamakServiceProvider"
+            ],
+            "aliases": {
+                "Melipayamak": "EmsSpot\\Melipayamak\\Facade"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
