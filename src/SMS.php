@@ -1,7 +1,6 @@
 <?php
 namespace EmsSpot\Melipayamak;
 use Illuminate\Notifications\Notification;
-use GuzzleHttp\Client;
 use Melipayamak;
 class SMS
 {
@@ -37,9 +36,9 @@ class SMS
 
 		$url = \Config::get('laravel-melipayamak-sms.url');
 		$data = [
-			'username' 	=> \Config::get('laravel-melipayamak-sms.username'),
-			'password' 	=> \Config::get('laravel-melipayamak-sms.password'),
-			'from' 		=> \Config::get('laravel-melipayamak-sms.from'),
+			// 'username' 	=> \Config::get('laravel-melipayamak-sms.username'),
+			// 'password' 	=> \Config::get('laravel-melipayamak-sms.password'),
+			// 'from' 		=> \Config::get('laravel-melipayamak-sms.from'),
 			'to' 		=> $this->recipient,
 			'text' 		=> $this->msg
 		];
