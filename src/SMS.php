@@ -13,11 +13,12 @@ class SMS
 
 	public function to($recipient)
 	{
-		if (config('laravel-melipayamak-sms.debug')) {
-			$this->recipient = config('laravel-melipayamak-sms.debug_recipient_number');
-		} else {
-			$this->recipient = $recipient;
-		}
+		$this->recipient = $recipient;
+//		if (config('laravel-melipayamak-sms.debug')) {
+//			$this->recipient = config('laravel-melipayamak-sms.debug_recipient_number');
+//		} else {
+//
+//		}
 		return $this;
 	}
 
