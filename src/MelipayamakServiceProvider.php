@@ -20,11 +20,5 @@ class MelipayamakServiceProvider extends \Illuminate\Support\ServiceProvider
 	 */
 	public function register()
 	{
-		// $this->mergeConfigFrom(__DIR__.'/config/config.php', 'melipayamak');    
-  //       $this->app->singleton('melipayamak', function ($app) {
-  //           $username = $app['config']->get('melipayamak.username');
-  //           $password = $app['config']->get('melipayamak.password');
-  //           return new Api($username, $password);
-  //       });
 	}
 }

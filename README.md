@@ -9,3 +9,4 @@ MELIPAYAMAK_FROM=
 MELIPAYAMAK_DEBUG_RECIPIENT=
 
 php artisan vendor:publish EmsSpot\Melipayamak\MelipayamakServiceProvider
+php artisan vendor:publish Melipayamak

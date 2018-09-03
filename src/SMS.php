@@ -14,11 +14,6 @@ class SMS
 	public function to($recipient)
 	{
 		$this->recipient = $recipient;
-//		if (config('laravel-melipayamak-sms.debug')) {
-//			$this->recipient = config('laravel-melipayamak-sms.debug_recipient_number');
-//		} else {
-//
-//		}
 		return $this;
 	}
 
@@ -37,8 +32,6 @@ class SMS
 
 		$url = \Config::get('laravel-melipayamak-sms.url');
 		$data = [
-			// 'username' 	=> \Config::get('laravel-melipayamak-sms.username'),
-			// 'password' 	=> \Config::get('laravel-melipayamak-sms.password'),
 			'from' 		=> \Config::get('laravel-melipayamak-sms.from'),
 			'to' 		=> $this->recipient,
 			'text' 		=> $this->msg
