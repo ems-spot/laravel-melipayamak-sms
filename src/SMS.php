@@ -39,7 +39,7 @@ class SMS
 		$data = [
 			// 'username' 	=> \Config::get('laravel-melipayamak-sms.username'),
 			// 'password' 	=> \Config::get('laravel-melipayamak-sms.password'),
-			// 'from' 		=> \Config::get('laravel-melipayamak-sms.from'),
+			'from' 		=> \Config::get('laravel-melipayamak-sms.from'),
 			'to' 		=> $this->recipient,
 			'text' 		=> $this->msg
 		];
