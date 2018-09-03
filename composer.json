@@ -4,7 +4,7 @@
     "type": "laravel-package",
     "homepage": "https://github.com/ems-spot/laravel-melipayamak-sms",
     "keywords": ["laravel", "laravel5", "melipayamak", "sms", "api"],
-    "license": "GNU",
+    "license": "MIT",
     "authors": [
         {
             "name": "Aria Radmand",
@@ -15,7 +15,8 @@
         {
             "name": "Farid Shahidi",
             "email": "farid.sh69@gmail.com",
-            "homepage": "http://faridshahidi.ir/"
+            "homepage": "http://faridshahidi.ir/",
+            "role": "Developer"
         }
     ],
     "require": {
