@@ -10,7 +10,6 @@ return [
 	
 	'username' => env('MELIPAYAMAK_USERNAME'),
 	'password' => env('MELIPAYAMAK_PASSWORD'),
-	'domain' => env('MELIPAYAMAK_DOMAIN'),
 	'from' => env('MELIPAYAMAK_FROM'),
 	'url' => env('MELIPAYAMAK_BASE_HTTP_URL', 'http://api.payamak-panel.com/post/Send.asmx?wsdl'),
 	'error_max_value' => env('MELIPAYAMAK_ERROR_MAX_VALUE', '1000'),
