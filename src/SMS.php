@@ -2,6 +2,7 @@
 namespace EmsSpot\Melipayamak;
 use Illuminate\Notifications\Notification;
 use GuzzleHttp\Client;
+use Melipayamak;
 class SMS
 {
 	protected $recipient;
@@ -36,21 +37,27 @@ class SMS
 
 		$url = \Config::get('laravel-melipayamak-sms.url');
 		$data = [
-			'UserName' 	=> \Config::get('laravel-melipayamak-sms.username'),
-			'PassWord' 	=> \Config::get('laravel-melipayamak-sms.password'),
-			'From' 		=> \Config::get('laravel-melipayamak-sms.from'),
-			'To' 		=> $this->recipient,
-			'Text' 		=> $this->msg,
-			// 'IsFlash' 	=> $isFlash
+			'username' 	=> \Config::get('laravel-melipayamak-sms.username'),
+			'password' 	=> \Config::get('laravel-melipayamak-sms.password'),
+			'from' 		=> \Config::get('laravel-melipayamak-sms.from'),
+			'to' 		=> $this->recipient,
+			'text' 		=> $this->msg
 		];
 		
 		return $this->execute($url, $data);
 	}
 
 	protected function execute($url, $data = null)
-	{		
-		$client = new Client();
-		$response = $client->post($url, $data);
+	{
+        try {
+            $sms = Melipayamak::sms();
+            $response = $sms->send($data['to'], $data['from'], $data['text']);
+            $json = json_decode($response);
+            \Log::debug($json->Value);
+
+        } catch(Exception $e) {
+            echo $e->getMessage();
+        }
 
 		\Log::info('message has been sent');
 		return $response;
