@@ -69,7 +69,7 @@ class SMS
             'to' 		=> $this->recipient,
             'text' 		=> $this->msg,
             'speech' 	=> $this->speech,
-            'scaduleDate' => \Carbon\Carbon::now()->format('Y-m-d\Th:m:s'),
+            'scaduleDate' => \Carbon\Carbon::now()->addSeconds(3)->format('Y-m-d\Th:m:s'),
         ];
         try {
             $sms = Melipayamak::sms('soap');
