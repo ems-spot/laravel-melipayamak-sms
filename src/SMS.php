@@ -21,7 +21,6 @@ class SMS
 	public function text($msg)
 	{
 		$this->msg = $msg;
-        $this->speech = $msg;
 		return $this;
 	}
 
@@ -33,18 +32,28 @@ class SMS
 
 	public function sendText()
 	{
-		\Log::info('sending text message (sms)',[
+		\Log::info('sending text message',[
 			'to'           => $this->recipient,
 			'message'      => $this->msg,
 		]);
 
-		$data = [
-			'from' 		=> \Config::get('laravel-melipayamak-sms.from'),
-			'to' 		=> $this->recipient,
-			'text' 		=> $this->msg
-		];
-		
-		return $this->execute($data, 'text');
+        $data = [
+            'from' 		=> \Config::get('laravel-melipayamak-sms.from'),
+            'to' 		=> $this->recipient,
+            'text' 		=> $this->msg,
+        ];
+
+        try {
+            $sms = Melipayamak::sms();
+            $response = $sms->send($data['to'], $data['from'], $data['text']);
+            $json = json_decode($response);
+            \Log::debug($json->Value);
+        }catch(Exception $e) {
+            echo $e->getMessage();
+        }
+
+        \Log::info('message has been sent');
+        return $response;
 	}
 
     public function sendSpeech()
@@ -60,30 +69,43 @@ class SMS
             'to' 		=> $this->recipient,
             'text' 		=> $this->msg,
             'speech' 	=> $this->speech,
+            'scaduleDate' => \Carbon\Carbon::now()->format('Y-m-d\Th:m:s'),
         ];
-
-        return $this->execute($data, 'speech');
-    }
-
-	protected function execute($data = null, $type = 'text')
-	{
         try {
-            if($type == 'text'){
-                $sms = Melipayamak::sms();
-                $response = $sms->send($data['to'], $data['from'], $data['text']);
-                $json = json_decode($response);
-                \Log::debug($json->Value);
-            }elseif($type == 'speech'){
-                $sms = Melipayamak::sms('soap');
-                $response = $sms->sendWithSpeech($data['to'], $data['from'], $data['text'], $data['speech']);
-                \Log::debug($response);
-            }
-
-        } catch(Exception $e) {
+            $sms = Melipayamak::sms('soap');
+            $response = $sms->sendWithSpeechSchduleDate($data['to'], $data['from'], $data['text'], $data['speech'], $data['scaduleDate']);
+            \Log::debug($response);
+        }catch(Exception $e) {
             echo $e->getMessage();
         }
 
-		\Log::info('message has been sent');
-		return $response;
-	}
+        \Log::info('message has been sent');
+        return $response;
+    }
+
+    public function sendSpeechAfterTwoMinutesIfFailed()
+    {
+        \Log::info('sending text and speech message',[
+            'to'           => $this->recipient,
+            'message'      => $this->msg,
+            'speech'      => $this->speech,
+        ]);
+
+        $data = [
+            'from' 		=> \Config::get('laravel-melipayamak-sms.from'),
+            'to' 		=> $this->recipient,
+            'text' 		=> $this->msg,
+            'speech' 	=> $this->speech,
+        ];
+        try {
+            $sms = Melipayamak::sms('soap');
+            $response = $sms->sendWithSpeech($data['to'], $data['from'], $data['text'], $data['speech']);
+            \Log::debug($response);
+        }catch(Exception $e) {
+            echo $e->getMessage();
+        }
+
+        \Log::info('message has been sent');
+        return $response;
+    }
 }
