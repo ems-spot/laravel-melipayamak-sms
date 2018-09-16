@@ -10,7 +10,7 @@ class MelipayamakServiceProvider extends \Illuminate\Support\ServiceProvider
 	public function boot()
 	{
 		$this->publishes([
-			__DIR__.'/../config/laravel-melipayamak-sms.php' => config_path('laravel-melipayamak-sms.php'),
+			__DIR__.'/../config/melipayamak.php' => config_path('melipayamak.php'),
 		]);
 	}
 	/**

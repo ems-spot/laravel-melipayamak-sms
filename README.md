@@ -26,13 +26,10 @@
     MELIPAYAMAK_USERNAME= 
     MELIPAYAMAK_PASSWORD= 
     MELIPAYAMAK_FROM= 
-    MELIPAYAMAK_DEBUG_RECIPIENT=
     
     in command line:
     
     php artisan vendor:publish EmsSpot\Melipayamak\MelipayamakServiceProvider
-    php artisan vendor:publish Melipayamak
-
 
 ## License
 
