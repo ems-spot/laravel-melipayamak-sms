@@ -1,110 +1,143 @@
 <?php
+
+declare(strict_types=1);
+
 namespace EmsSpot\Melipayamak;
+
 use Illuminate\Notifications\Notification;
+use Log;
 use Melipayamak;
-class SMS
+
+final class SMS
 {
-    protected $recipient;
-    protected $msg;
-    protected $speech;
-    public function send($notifiable, Notification $notification)
+    /**
+     * @var
+     */
+    private $recipient;
+    /**
+     * @var
+     */
+    private $msg;
+    /**
+     * @var
+     */
+    private $speech;
+
+    public function send(object $notifiable, Notification $notification): void
     {
-        $message = $notification->toSms($notifiable);
+        $notification->toSms($notifiable);
     }
 
-    public function to($recipient)
+    public function to(string $recipient): self
     {
         $this->recipient = $recipient;
+
         return $this;
     }
 
-    public function text($msg)
+    public function text(string $msg): self
     {
         $this->msg = $msg;
+
         return $this;
     }
 
-    public function speech($speech)
+    public function speech(string $speech): self
     {
         $this->speech = $speech;
+
         return $this;
     }
 
+    /**
+     * @return false|string
+     */
     public function sendText()
     {
-        \Log::info('sending text message',[
-            'to'           => $this->recipient,
-            'message'      => $this->msg,
+        Log::info('sending text message', [
+            'to' => $this->recipient,
+            'message' => $this->msg,
         ]);
 
         $data = [
-            'from'      => \Config::get('melipayamak.from'),
-            'to'        => $this->recipient,
-            'text'      => $this->msg,
+            'from' => Config::get('melipayamak.from'),
+            'to' => $this->recipient,
+            'text' => $this->msg,
         ];
 
-        try {
-            $sms = Melipayamak::sms();
-            $response = $sms->send($data['to'], $data['from'], $data['text']);
-            \Log::debug($response);
-        }catch(Exception $e) {
-            echo $e->getMessage();
-        }
-
-        \Log::info('message has been sent');
-        return $response;
+        return $this->handleResponse($data);
     }
 
+    /**
+     * @param string[]
+     *
+     * @return false|string
+     */
+    public function handleResponse(array $data, string $type = 'text')
+    {
+        try {
+            $username = config('melipayamak.username');
+            $password = config('melipayamak.password');
+            if (empty($username) || empty($password)) {
+                Log::error('Username or password is empty for melipayamak');
+
+                return json_encode([
+                    'status' => 'error',
+                    'message' => 'Username or password is empty for sms driver',
+                ]);
+            }
+
+            if ('speech' === $type) {
+                $sms = Melipayamak::sms('soap');
+                $response = $sms->sendWithSpeechSchduleDate($data['to'], $data['from'], $data['text'], $data['speech'], $data['scaduleDate']);
+            } else {
+                $sms = Melipayamak::sms();
+                $json_response = $sms->send($data['to'], $data['from'], $data['text']);
+            }
+
+            Log::debug($json_response);
+            Log::info('message has been sent');
+            $response = json_decode($json_response, true);
+            if ('Ok' === $response['StrRetStatus']) {
+                return json_encode([
+                    'status' => 'success',
+                    'message' => 'Sms successfully sent.',
+                ]);
+            }
+
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Sms failed with code: '.$response['RetStatus'].' - '.$response['StrRetStatus'],
+            ]);
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * @return false|string
+     */
     public function sendSpeech()
     {
-        \Log::info('sending text and speech message',[
-            'to'           => $this->recipient,
-            'message'      => $this->msg,
-            'speech'      => $this->speech,
+        Log::info('sending text and speech message', [
+            'to' => $this->recipient,
+            'message' => $this->msg,
+            'speech' => $this->speech,
         ]);
 
         $data = [
-            'from'      => \Config::get('melipayamak.from'),
-            'to'        => $this->recipient,
-            'text'      => $this->msg,
-            'speech'    => $this->speech,
-            'scaduleDate' => \Carbon\Carbon::now()->addSeconds(3)->format('Y-m-d\Th:m:s'),
+            'from' => Config::get('melipayamak.from'),
+            'to' => $this->recipient,
+            'text' => $this->msg,
+            'speech' => $this->speech,
+            'scaduleDate' => Carbon::now()->addSeconds(3)->format('Y-m-d\Th:m:s'),
         ];
-        try {
-            $sms = Melipayamak::sms('soap');
-            $response = $sms->sendWithSpeechSchduleDate($data['to'], $data['from'], $data['text'], $data['speech'], $data['scaduleDate']);
-            \Log::debug($response);
-        }catch(Exception $e) {
-            echo $e->getMessage();
-        }
 
-        \Log::info('message has been sent');
-        return $response;
-    }
-
-    public function sendSpeechAfterTwoMinutesIfFailed()
-    {
-        \Log::info('sending text and speech message',[
-            'to'           => $this->recipient,
-            'message'      => $this->msg,
-            'speech'      => $this->speech,
-        ]);
-
-        $data = [
-            'from'      => \Config::get('melipayamak.from'),
-            'to'        => $this->recipient,
-            'text'      => $this->msg,
-            'speech'    => $this->speech,
-        ];
-        try {
-            $sms = Melipayamak::sms('soap');
-            $response = $sms->sendWithSpeech($data['to'], $data['from'], $data['text'], $data['speech']);
-            \Log::debug($response);
-        }catch(Exception $e) {
-            echo $e->getMessage();
-        }
-
-        \Log::info('message has been sent');
-        return $response;
+        return $this->handleResponse($data, 'speech');
     }
 }
