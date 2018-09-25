@@ -14,7 +14,11 @@ class SMS
 
     public function to($recipient)
     {
-        $this->recipient = $recipient;
+		if (config('melipayamak.debug')) {
+			$this->recipient = config('melipayamak.debug_recipient_number');
+		} else {
+			$this->recipient = $recipient;
+		}
         return $this;
     }
 
