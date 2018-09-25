@@ -7,6 +7,8 @@ namespace EmsSpot\Melipayamak;
 use Illuminate\Notifications\Notification;
 use Log;
 use Melipayamak;
+use Config;
+use Carbon\Carbon;
 
 final class SMS
 {
@@ -30,8 +32,8 @@ final class SMS
 
     public function to(string $recipient): self
     {
-        if (config('melipayamak.debug')) {
-            $this->recipient = config('melipayamak.debug_recipient_number');
+        if (Config::get('melipayamak.debug')) {
+            $this->recipient = Config::get('melipayamak.debug_recipient_number');
         } else {
             $this->recipient = $recipient;
         }
@@ -81,8 +83,8 @@ final class SMS
     public function handleResponse(array $data, string $type = 'text')
     {
         try {
-            $username = config('melipayamak.username');
-            $password = config('melipayamak.password');
+            $username = Config::get('melipayamak.username');
+            $password = Config::get('melipayamak.password');
             if (empty($username) || empty($password)) {
                 Log::error('Username or password is empty for melipayamak');
 
@@ -94,7 +96,15 @@ final class SMS
 
             if ('speech' === $type) {
                 $sms = Melipayamak::sms('soap');
-                $response = $sms->sendWithSpeechSchduleDate($data['to'], $data['from'], $data['text'], $data['speech'], $data['scaduleDate']);
+                $string_response = $sms->sendWithSpeechSchduleDate($data['to'], $data['from'], $data['text'], $data['speech'], $data['scaduleDate']);
+                if($string_response === "0"){
+                    $json_response = json_encode([
+                        'StrRetStatus' => 'invalidData',
+                        'RetStatus' => null
+                    ]);
+                }else{
+                    $json_response = json_encode(['StrRetStatus' => 'Ok']);
+                }
             } else {
                 $sms = Melipayamak::sms();
                 $json_response = $sms->send($data['to'], $data['from'], $data['text']);
@@ -140,7 +150,7 @@ final class SMS
             'to' => $this->recipient,
             'text' => $this->msg,
             'speech' => $this->speech,
-            'scaduleDate' => Carbon::now()->addSeconds(1)->format('Y-m-d\Th:m:s'),
+            'scaduleDate' => Carbon::now()->addSeconds(3)->format('Y-m-d\Th:m:s'),
         ];
 
         return $this->handleResponse($data, 'speech');
