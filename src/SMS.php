@@ -140,7 +140,7 @@ final class SMS
             'to' => $this->recipient,
             'text' => $this->msg,
             'speech' => $this->speech,
-            'scaduleDate' => Carbon::now()->addSeconds(3)->format('Y-m-d\Th:m:s'),
+            'scaduleDate' => Carbon::now()->addSeconds(1)->format('Y-m-d\Th:m:s'),
         ];
 
         return $this->handleResponse($data, 'speech');
