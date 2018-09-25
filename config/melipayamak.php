@@ -12,4 +12,6 @@ return [
     'password' => env('MELIPAYAMAK_PASSWORD'),
     'debug_recipient' => env('MELIPAYAMAK_DEBUG_RECIPIENT'),
     'from' => env('MELIPAYAMAK_FROM'),
+	'debug' => env('MELIPAYAMAK_DEBUG', true),
+	'debug_recipient_number' => env('MELIPAYAMAK_DEBUG_RECIPIENT'),
 ];
