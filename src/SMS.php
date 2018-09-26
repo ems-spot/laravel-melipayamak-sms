@@ -37,7 +37,6 @@ final class SMS
         } else {
             $this->recipient = $recipient;
         }
-        $this->recipient = $recipient;
 
         return $this;
     }
