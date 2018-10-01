@@ -23,13 +23,19 @@
 ## Installation
     in .env:
     
-    MELIPAYAMAK_USERNAME= 
-    MELIPAYAMAK_PASSWORD= 
-    MELIPAYAMAK_FROM= 
+    MELIPAYAMAK_USERNAME=
+    MELIPAYAMAK_PASSWORD=
+    MELIPAYAMAK_FROM=
+    MELIPAYAMAK_DEBUG=false
+    MELIPAYAMAK_DEBUG_RECIPIENT=
     
     in command line:
+        
+    php artisan vendor:publish --provider="EmsSpot\Melipayamak\MelipayamakServiceProvider"
     
-    php artisan vendor:publish EmsSpot\Melipayamak\MelipayamakServiceProvider
+    or if it doesnt work use 
+    
+    php artisan vendor:publish --force
 
 ## License
 
